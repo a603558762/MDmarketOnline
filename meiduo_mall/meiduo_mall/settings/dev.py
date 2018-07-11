@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # 调整导包路径,默认在启动文件的路径找(manage.py)
 sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
-
+print(sys.path)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -40,8 +40,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
-    'users.UsersConfig',
+    'rest_framework',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -85,7 +85,7 @@ DATABASES = {
         'PORT': 3306,
         'USER':'root',
         'PASSWORD':'hh123456',
-        # 'DATABASE':'meiduo',
+        # 'DATABASE':'meiduo_mall',
         'NAME': 'meiduo_mall',
     }
 }
@@ -105,7 +105,15 @@ CACHES = {
         "OPTIONS": {
             "CLIENT_CLASS": "django_redis.client.DefaultClient",
         }
-    }
+    },
+    "image_code_store_redis": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://127.0.0.1:6379/2",
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        }
+    },
+
 }
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "session"
@@ -195,3 +203,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
 STATIC_URL = '/static/'
+# 使用django自带的AbstractUser并添加了新的手机号这个字段
+AUTH_USER_MODEL = 'users.User'  # users会向INSTALLED_APPS找

@@ -1,0 +1,2 @@
+# 验证码的保存时间
+MAX_IMAGE_CODE_LIVE_TIME=300
