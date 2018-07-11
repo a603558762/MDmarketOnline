@@ -18,7 +18,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # 调整导包路径,默认在启动文件的路径找(manage.py)
 sys.path.insert(0,os.path.join(BASE_DIR,'apps'))
-print(sys.path)
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'HOST': '127.0.0.1',
         'PORT': 3306,
-        'USER':'root',
+        'USER':'yoyo',
         'PASSWORD':'hh123456',
         # 'DATABASE':'meiduo_mall',
         'NAME': 'meiduo_mall',
