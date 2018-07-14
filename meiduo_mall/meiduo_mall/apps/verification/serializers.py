@@ -2,6 +2,8 @@ from django_redis import get_redis_connection
 from rest_framework import serializers
 
 
+
+
 class ImageCodeCheckSerializer(serializers.Serializer):
     uuid = serializers.UUIDField(format='hex_verbose')
     text = serializers.CharField(max_length=4, min_length=4)
@@ -38,3 +40,5 @@ class ImageCodeCheckSerializer(serializers.Serializer):
         if send_flag:
             raise serializers.ValidationError('请求次数过于频繁')
         return attrs
+
+

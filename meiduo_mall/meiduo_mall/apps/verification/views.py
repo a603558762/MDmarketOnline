@@ -73,5 +73,3 @@ class SMScodeView(GenericAPIView):
         return Response({"message": "OK"}, status.HTTP_200_OK)
 
 
-class CheckUserName(GenericAPIView):
-    pass

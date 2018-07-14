@@ -1,7 +1,6 @@
 # 验证码的保存时间
 MAX_IMAGE_CODE_LIVE_TIME=300
 
-
 # 短信验证码的有效期5分钟
 SMS_CODE_REDIS_EXPIRES=300
 
