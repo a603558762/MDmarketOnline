@@ -18,6 +18,8 @@ var vm = new Vue({
         allow: false,
         image_code_id: '',
         image_code_url: '',
+        sms_status: '获取短信验证码',
+        hosts,
     },
 
     // 钩子
@@ -26,7 +28,7 @@ var vm = new Vue({
         // 在页面加载之前请求一个验证码
         // TODO 发起请求
         this.image_code_id = this.generateUUID()
-        this.image_code_url="http://127.0.0.1:8000/image_code/"+this.image_code_id+"/"
+        this.image_code_url = this.hosts+"/image_code/" + this.image_code_id + "/"
 
     },
     methods: {
@@ -44,9 +46,9 @@ var vm = new Vue({
             return uuid;
         },
         // 每次点击验证码时候,更换验证码
-        change_image_code: function(){
-
-            this.image_code_url="http://127.0.0.1:8000/image_code/"+this.generateUUID()
+        change_image_code: function () {
+            this.image_code_id = this.generateUUID()
+            this.image_code_url = this.hosts+"/image_code/" + this.image_code_id + "/"
         },
 
 
@@ -87,6 +89,8 @@ var vm = new Vue({
             } else {
                 this.error_image_code = false;
             }
+            ;
+            // 验证码的验证
         },
         check_sms_code: function () {
             if (!this.sms_code) {
@@ -94,22 +98,57 @@ var vm = new Vue({
             } else {
                 this.error_sms_code = false;
             }
-        },
-        check_allow: function () {
-            if (!this.allow) {
-                this.error_allow = true;
-            } else {
-                this.error_allow = false;
-            }
-        },
-        // 注册
-        on_submit: function () {
-            this.check_username();
-            this.check_pwd();
-            this.check_cpwd();
-            this.check_phone();
-            this.check_sms_code();
-            this.check_allow();
-        }
+        },// TODO 获取短信验证码
+        getSMScode: function () {
+
+            axios.get(this.hosts+"/smscode/" + this.mobile + "/?text=" +
+                this.image_code + "&uuid=" + this.image_code_id, {
+                responseType: 'json'
+
+            }).then(response =>{
+                // 倒计时60s
+                var num= 60;
+
+                var t = setInterval(() => {
+                    if (num != 0) {
+                        this.sms_status=num+'秒'
+                        // $(".get_code").show()
+                        num -= 1;
+                    } else {
+                        clearInterval(t)
+                        this.sms_status='获取短信验证码';
+
+                    }
+                }, 1000,60);
+
+
+
+
+            })
+
+
+
+
+},
+
+
+check_allow: function () {
+    if (!this.allow) {
+        this.error_allow = true;
+    } else {
+        this.error_allow = false;
     }
-});
+}
+,
+// 注册
+on_submit: function () {
+    this.check_username();
+    this.check_pwd();
+    this.check_cpwd();
+    this.check_phone();
+    this.check_sms_code();
+    this.check_allow();
+}
+}
+})
+;

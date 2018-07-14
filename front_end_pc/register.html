@@ -6,6 +6,7 @@
 	<link rel="stylesheet" type="text/css" href="css/reset.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 	<script type="text/javascript" src="js/vue-2.5.16.js"></script>
+	<script type="text/javascript" src="js/hosts.js"></script>
 </head>
 <body>
 	<div class="register_con">
@@ -52,7 +53,7 @@
 					<li>
 						<label>短信验证码:</label>
 						<input type="text" v-model="sms_code" @blur="check_sms_code" name="msg_code" id="msg_code" class="msg_input">
-						<a href="#" class="get_msg_code">获取短信验证码</a>
+						<a @click="getSMScode" class="get_msg_code">{{ sms_status }}</a>
 						<span v-show="error_sms_code" class="error_tip">请填写短信验证码</span>
 					</li>
 					<li class="agreement">
@@ -85,5 +86,6 @@
 		<p>电话：010-****888    京ICP备*******8号</p>
 	</div>
 	<script type="text/javascript" src="js/register.js"></script>
+	<script type="text/javascript" src="js/axios_0.18.0.min.js"></script>
 </body>
 </html>
