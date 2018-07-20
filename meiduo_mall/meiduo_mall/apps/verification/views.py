@@ -1,5 +1,6 @@
 import random
 
+
 from django.http import HttpResponse
 from django.shortcuts import render
 
@@ -15,6 +16,8 @@ from meiduo_mall.utils import contains
 from meiduo_mall.utils.captcha import captcha
 
 from meiduo_mall.apps.verification.serializers import ImageCodeCheckSerializer
+from users.models import User
+
 
 
 class Image_code_generate(APIView):
@@ -26,6 +29,7 @@ class Image_code_generate(APIView):
         # image_code_id实际是uuid,依据uuid生成对应的验证码图形
         name, text, image = captcha.captcha.generate_captcha()
         # 将生成的验证码对应的text保存到redis中,image_uuid的保存方式
+        print("image_text:",text)
         redis_conn = get_redis_connection('image_code_store_redis')
         redis_conn.setex(name="image_{}".format(uuid), time=contains.MAX_IMAGE_CODE_LIVE_TIME, value=text)
         # return Response(data=image,content_type='image/jpg')
@@ -49,12 +53,13 @@ class SMScodeView(GenericAPIView):
 
         serializer = self.get_serializer(data=request.query_params)
         # print('request.query_params:',request.query_params)
-        # 教研参数的工作在序列化器中
+        # 校验参数的工作在序列化器中
         serializer.is_valid(raise_exception=True)
 
         # 生成短信验证码
         sms_code = "%06d" % random.randint(0, 999999)
-        # print('验证码是:',sms_code)
+
+        print('短信验证码是:',sms_code)
         # 保存短信验证码与发送记录
         redis_conn = get_redis_connection('image_code_store_redis')
         # pl = redis_conn.pipeline()
@@ -62,14 +67,43 @@ class SMScodeView(GenericAPIView):
         redis_conn.setex("sms_%s" % mobile, contains.SMS_CODE_REDIS_EXPIRES, sms_code)
 
         # 设置一个短信已发状态
-        redis_conn.setex("send_flag_%s" % mobile, contains.SEND_SMS_CODE_INTERVAL, 1)
+        # redis_conn.setex("send_flag_%s" % mobile, contains.SEND_SMS_CODE_INTERVAL, 1)
 
         sms_code_expires = contains.SMS_CODE_REDIS_EXPIRES // 60
         # 服务商发送短信验证码
-
-        ccp = CCP()
-        ccp.send_template_sms(mobile, [sms_code, sms_code_expires], contains.SMS_CODE_TEMP_ID)
+        # send_sms_code.delay()
+        # ccp = CCP()
+        # ccp.send_template_sms(mobile, [sms_code, sms_code_expires], contains.SMS_CODE_TEMP_ID)
 
         return Response({"message": "OK"}, status.HTTP_200_OK)
+
+class SMSsend_by_access_token(APIView):
+
+    """/sms_codes/?access_token=xxx"""
+    def get(self,request):
+        access_token=request.query_params.get('access_token')
+        # 发送验证码
+        sms_code = "%06d" % random.randint(0, 999999)
+
+
+        mobile=User.check_send_sms_code_token(access_token)
+        print('短信验证码是:', sms_code)
+        # 保存短信验证码与发送记录
+        redis_conn = get_redis_connection('image_code_store_redis')
+        # pl = redis_conn.pipeline()
+        # pl.multi()
+        redis_conn.setex("sms_%s" % mobile, contains.SMS_CODE_REDIS_EXPIRES, sms_code)
+
+        # 设置一个短信已发状态
+        # redis_conn.setex("send_flag_%s" % mobile, contains.SEND_SMS_CODE_INTERVAL, 1)
+
+        sms_code_expires = contains.SMS_CODE_REDIS_EXPIRES // 60
+        # 服务商发送短信验证码
+        # send_sms_code.delay()
+        # ccp = CCP()
+        # ccp.send_template_sms(mobile, [sms_code, sms_code_expires], contains.SMS_CODE_TEMP_ID)
+
+        return Response({"message": "OK"}, status.HTTP_200_OK)
+
 
 

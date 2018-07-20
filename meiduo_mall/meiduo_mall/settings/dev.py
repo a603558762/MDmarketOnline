@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/1.11/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/1.11/ref/settings/
 """
-
+import datetime
 import os
 import sys
 
@@ -28,7 +28,7 @@ SECRET_KEY = '2$d-q@+u-7qlh4*kct1!#$7n6a+)(mxyk0p%=68xtb^b^ro4ke'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['www.meiduo.site','api.meiduo.site']
+ALLOWED_HOSTS = ['www.meiduo.site','api.meiduo.site','127.0.0.1']
 
 
 # Application definition
@@ -44,6 +44,12 @@ INSTALLED_APPS = [
     'corsheaders',
     'users.apps.UsersConfig',
     'verification.apps.VerificationConfig',
+    'oauth.apps.OauthConfig',
+    'goods.apps.GoodsConfig',
+    'contents.apps.ContentsConfig',
+    'ckeditor',
+    'ckeditor_uploader',
+
 ]
 
 MIDDLEWARE = [
@@ -167,8 +173,21 @@ LOGGING = {
 REST_FRAMEWORK = {
     # 异常处理
     'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.exception_handler',
+    # JWT
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
 }
 
+JWT_AUTH = {
+    # access_tokrn有效期
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.utils.jwt_response_payload_handler',
+
+}
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
@@ -217,3 +236,18 @@ CORS_ORIGIN_WHITELIST = (
     'api.meiduo.site:8000'
 )
 CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
+
+# 允许手机号登录
+AUTHENTICATION_BACKENDS = [
+    'users.utils.UsernameMobileAuthBackend',
+]
+
+# 富文本编辑器ckeditor配置
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',  # 工具条功能
+        'height': 300,  # 编辑器高度
+        # 'width': 300,  # 编辑器宽
+    },
+}
+CKEDITOR_UPLOAD_PATH = ''  # 上传图片保存路径，使用了FastDFS，所以此处设为''

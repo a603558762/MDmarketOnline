@@ -9,3 +9,6 @@ SEND_SMS_CODE_INTERVAL=60
 
 # 短信验证码的模板
 SMS_CODE_TEMP_ID=1
+
+# access_token的有效期
+ACCESS_TOKEN_LIFE_TIME=300
