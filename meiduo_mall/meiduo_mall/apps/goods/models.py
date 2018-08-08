@@ -31,7 +31,7 @@ class GoodsChannel(BaseModel):
     url = models.CharField(max_length=50, verbose_name='频道页面链接')
     sequence = models.IntegerField(verbose_name='组内顺序')
 
-    class Meta:
+    class Meta:                                                                                                                                                                                                                                                                                                                                          
         db_table = 'tb_goods_channel'
         verbose_name = '商品频道'
         verbose_name_plural = verbose_name

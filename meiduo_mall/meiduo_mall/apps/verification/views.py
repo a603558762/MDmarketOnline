@@ -2,7 +2,6 @@ import random
 
 
 from django.http import HttpResponse
-from django.shortcuts import render
 
 # Create your views here.
 from django_redis import get_redis_connection
@@ -11,7 +10,8 @@ from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from meiduo_mall.libs.yuntongxun.sms import CCP
+from celerytask.sms.tasks import send_sms_code
+
 from meiduo_mall.utils import contains
 from meiduo_mall.utils.captcha import captcha
 
@@ -71,7 +71,7 @@ class SMScodeView(GenericAPIView):
 
         sms_code_expires = contains.SMS_CODE_REDIS_EXPIRES // 60
         # 服务商发送短信验证码
-        # send_sms_code.delay()
+        send_sms_code.delay(mobile,sms_code,sms_code_expires)
         # ccp = CCP()
         # ccp.send_template_sms(mobile, [sms_code, sms_code_expires], contains.SMS_CODE_TEMP_ID)
 
@@ -99,7 +99,7 @@ class SMSsend_by_access_token(APIView):
 
         sms_code_expires = contains.SMS_CODE_REDIS_EXPIRES // 60
         # 服务商发送短信验证码
-        # send_sms_code.delay()
+        send_sms_code.delay(mobile,sms_code,sms_code_expires)
         # ccp = CCP()
         # ccp.send_template_sms(mobile, [sms_code, sms_code_expires], contains.SMS_CODE_TEMP_ID)
 

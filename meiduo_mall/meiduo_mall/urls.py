@@ -20,7 +20,10 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^', include('verification.urls')),
     url(r'^', include('users.urls')),
+    url(r'^',include('oauth.urls')),
+    url(r'^',include('goods.urls')),
     # 富文本编辑器
     url(r'^ckeditor/', include('ckeditor_uploader.urls')),
+    url(r'^', include('area.urls')),
 
 ]
